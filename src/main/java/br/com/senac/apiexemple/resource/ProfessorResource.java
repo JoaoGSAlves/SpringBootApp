@@ -1,10 +1,8 @@
 package br.com.senac.apiexemple.resource;
 
-
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.catalina.connector.Response;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,65 +16,54 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.senac.apiexemple.entity.Professor;
-import br.com.senac.apiexemple.dto.ProfessorDTO;
 import br.com.senac.apiexemple.service.ProfessorService;
 
 @RestController
 @RequestMapping("professores")
 public class ProfessorResource {
-	
+
 	@Autowired
 	private ModelMapper mapper;
-	
+
 	@Autowired
 	private ProfessorService professorService;
-	
+
 	@PostMapping
-	public ResponseEntity<ProfessorDTO> cadastrarAluno(@RequestBody ProfessorDTO professorDTO) {
-		
-		Professor professor = mapper.map(professorDTO, Professor.class);
-		
+	public ResponseEntity<Professor> cadastrarAluno(@RequestBody Professor Professor) {
+		Professor professor = mapper.map(Professor, Professor.class);
 		professor = professorService.salvar(professor);
-		
-		ProfessorDTO professorNovo = mapper.map(professor,ProfessorDTO.class);
-		
+		Professor professorNovo = mapper.map(professor, Professor.class);
 		return ResponseEntity.ok().body(professorNovo);
-		
+
 	}
-	
+
 	@GetMapping
-	public ResponseEntity<List<ProfessorDTO>> buscarTodosAluno(){
+	public ResponseEntity<List<Professor>> buscarTodosAluno() {
 		List<Professor> listaProfessores = professorService.buscarTodosProfessores();
-		
-		List<ProfessorDTO> listaProfessorDTO = listaProfessores.stream().map(aluno -> 
-		mapper.map(aluno, ProfessorDTO.class)).collect(Collectors.toList());
-		
-		return ResponseEntity.ok().body(listaProfessorDTO);
+		List<Professor> listaProfessor = listaProfessores.stream().map(aluno -> mapper.map(aluno, Professor.class))
+				.collect(Collectors.toList());
+		return ResponseEntity.ok().body(listaProfessor);
 	}
-	
-	
+
 	@GetMapping("/{id}")
-	public ResponseEntity<ProfessorDTO> buscarAlunoPorID(@PathVariable("id") Integer id){
+	public ResponseEntity<Professor> buscarAlunoPorID(@PathVariable("id") Integer id) {
 		Professor professor = professorService.getProfessorById(id);
-		ProfessorDTO professorDTO = mapper.map(professor, ProfessorDTO.class);
-		return ResponseEntity.ok().body(professorDTO);
+		Professor Professor = mapper.map(professor, Professor.class);
+		return ResponseEntity.ok().body(Professor);
 	}
-	
+
 	@PutMapping("/{id}")
-	public ResponseEntity<ProfessorDTO> atualizarProfessor(@PathVariable("id") Integer id, @RequestBody ProfessorDTO professorDTO){
-		
-		Professor professor = mapper.map(professorDTO, Professor.class);
-		
-		professor = professorService.updateProfessor(id, professor);
-		
-		ProfessorDTO professorAlteradoDTO = mapper.map(professor, ProfessorDTO.class);
-		
+	public ResponseEntity<Professor> atualizarProfessor(@PathVariable("id") Integer id,
+			@RequestBody Professor Professor) {
+		Professor professor = mapper.map(Professor, Professor.class);
+		professor = professorService.updateProfessor(id,professor);
+		Professor professorAlteradoDTO = mapper.map(professor, Professor.class);
 		return ResponseEntity.ok().body(professorAlteradoDTO);
-		
+
 	}
-	
+
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Boolean> excluirProfessor(@PathVariable("id") Integer id){
+	public ResponseEntity<Boolean> excluirProfessor(@PathVariable("id") Integer id) {
 		Boolean flag = professorService.deleteProfessor(id);
 		return ResponseEntity.ok().body(flag);
 	}

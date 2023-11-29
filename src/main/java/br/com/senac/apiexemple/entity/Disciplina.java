@@ -8,16 +8,13 @@ import lombok.Data;
 
 @Entity
 @Data
-public class Professor {
+public class Disciplina {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
-
+	private Integer Id;
+	
 	private String nome;
-
-	private String sobreNome;
-
-	private String email;
 
 	public String getNome() {
 		return nome;
@@ -27,24 +24,8 @@ public class Professor {
 		this.nome = nome;
 	}
 
-	public String getSobreNome() {
-		return sobreNome;
-	}
-
-	public void setSobreNome(String sobreNome) {
-		this.sobreNome = sobreNome;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
 	public Integer getId() {
-		return id;
+		return Id;
 	}
-
+	
 }
