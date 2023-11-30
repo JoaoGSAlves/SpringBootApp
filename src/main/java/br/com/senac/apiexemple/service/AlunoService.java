@@ -1,6 +1,8 @@
 package br.com.senac.apiexemple.service;
 
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import br.com.senac.apiexemple.entity.Aluno;
@@ -20,8 +22,8 @@ public class AlunoService {
 		return repo.findAll();
 	}
 
-	public Aluno getAlunoById(Integer id) {
-		return repo.findById(id).orElse(null);
+	public Optional<Aluno> getAlunoById(Integer id) {
+		return repo.findById(id);
 	}
 
 	public Boolean deleteAluno(Integer id) {

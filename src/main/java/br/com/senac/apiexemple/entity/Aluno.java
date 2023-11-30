@@ -18,7 +18,6 @@ public class Aluno {
 	@ManyToOne
 	@JoinColumn(name = "id_turma")
 	private Turma turma;
-	
 
 	private String nome;
 	

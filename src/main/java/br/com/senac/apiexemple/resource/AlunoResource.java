@@ -1,9 +1,11 @@
 package br.com.senac.apiexemple.resource;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.senac.apiexemple.entity.Aluno;
+import br.com.senac.apiexemple.entity.Turma;
 import br.com.senac.apiexemple.service.AlunoService;
+import br.com.senac.apiexemple.service.TurmaService;
 
 @RestController
 @RequestMapping("alunos")
@@ -26,6 +30,9 @@ public class AlunoResource {
 
 	@Autowired
 	private AlunoService alunoService;
+	
+	@Autowired
+	TurmaService turmaService;
 
 	@PostMapping
 	public ResponseEntity<Aluno> cadastrarAluno(@RequestBody Aluno Aluno) {
@@ -45,18 +52,23 @@ public class AlunoResource {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Aluno> buscarAlunoPorID(@PathVariable("id") Integer id) {
-		Aluno aluno = alunoService.getAlunoById(id);
-		Aluno Aluno = mapper.map(aluno, Aluno.class);
-		return ResponseEntity.ok().body(Aluno);
+	public ResponseEntity<Object> buscarAlunoPorID(@PathVariable("id") Integer id) {
+		Optional<Aluno> alunoOptional = alunoService.getAlunoById(id);
+		if (alunoOptional.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Aluno não encontrado!");
+		}
+		return ResponseEntity.status(HttpStatus.OK).body(alunoService.getAlunoById(id));
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Aluno> atualizarAluno(@PathVariable("id") Integer id, @RequestBody Aluno Aluno) {
-		Aluno aluno = mapper.map(Aluno, Aluno.class);
-		aluno = alunoService.updateAluno(id, aluno);
-		Aluno alunoAlteradoDTO = mapper.map(aluno, Aluno.class);
-		return ResponseEntity.ok().body(alunoAlteradoDTO);
+	public ResponseEntity<Object> atualizarAluno(@PathVariable("id") Integer id, @RequestBody Aluno alunoAtualizado) {
+		Optional<Aluno> alunoOptional = alunoService.getAlunoById(id);
+		if (alunoOptional.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Aluno não encontrado!");
+		}
+		turmaService.salvar(alunoAtualizado.getTurma());
+		alunoAtualizado.setId(alunoOptional.get().getId());
+		return ResponseEntity.status(HttpStatus.CREATED).body(alunoService.salvar(alunoAtualizado)); 
 	}
 
 	@DeleteMapping("/{id}")
