@@ -23,7 +23,11 @@ public class TurmaService {
 	public Turma getTurmaById(Integer id) {
 		return repo.findById(id).orElse(null);
 	}
-
+	
+    public Turma getTurmaByName(String nome) {
+        return repo.findTurmaByNome(nome);
+    }
+    
 	public Boolean deleteTurma(Integer id) {
 		Turma turma = repo.findById(id).orElse(null);
 		if (turma != null) {

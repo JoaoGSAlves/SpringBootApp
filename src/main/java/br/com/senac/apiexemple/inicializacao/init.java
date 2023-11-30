@@ -41,25 +41,27 @@ public class init implements ApplicationListener<ContextRefreshedEvent> {
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
-
+		
+		Turma ads = new Turma();
+		ads.setNome("ADS");
+		Turma rede = new Turma();
+		rede.setNome("Rede");
+		
 		// Alunos
 		Aluno aluno1 = new Aluno();
 		aluno1.setNome("teste");
 		aluno1.setEmail("teste@gmail.com");
 		aluno1.setSobreNome("testinho");
-		alunoService.salvar(aluno1);
 
 		Aluno aluno2 = new Aluno();
 		aluno2.setNome("Luca");
 		aluno2.setEmail("lucadpagode@gmail.com");
 		aluno2.setSobreNome("do Pagode");
-		alunoService.salvar(aluno2);
 
 		Aluno aluno3 = new Aluno();
 		aluno3.setNome("Joao");
 		aluno3.setEmail("joaoaugusto@gmail.com");
 		aluno3.setSobreNome("Alosno");
-		alunoService.salvar(aluno3);
 
 		List<Aluno> listaAlunos = alunoService.buscarTodosAlunos();
 		listaAlunos.forEach(aluno -> System.out.println(aluno.getNome()));
@@ -88,24 +90,7 @@ public class init implements ApplicationListener<ContextRefreshedEvent> {
 		List<Professor> listaProfessores = professorService.buscarTodosProfessores();
 		listaProfessores.forEach(professor -> System.out.println("Nome do professor: " + professor.getNome()));
 		;
-
-		// Turmas
-		Turma ads = new Turma();
-		ads.setNome("ADS");
-		Turma rede = new Turma();
-		rede.setNome("Rede");
 		
-		aluno1.setTurma(ads);
-		aluno2.setTurma(rede);
-		aluno3.setTurma(rede);
-
-		List<Turma> listaTurmas = turmaService.buscarTodasTurmas();
-		listaTurmas.forEach(turma -> System.out.println("Nome da turma: " + turma.getNome()));
-
-		turmaRepo.saveAll(Arrays.asList(ads, rede));
-		alunoRepo.saveAll(Arrays.asList(aluno1,aluno2,aluno3));
-		
-
 		// Disciplinas
 		Disciplina JavaWeb = new Disciplina();
 		JavaWeb.setNome("Java Web");
@@ -113,8 +98,25 @@ public class init implements ApplicationListener<ContextRefreshedEvent> {
 		Estrutura_de_Dados.setNome("Estrutura de Dados");
 		Disciplina mobile = new Disciplina();
 		mobile.setNome("Programação Mobile");
+		Disciplina arquitetura = new Disciplina();
+		arquitetura.setNome("Arquitetura de Computadores");
+		
+		// Turmas
+		
+		aluno1.setTurma(ads);
+		aluno2.setTurma(rede);
+		aluno3.setTurma(rede);
+		
+		aluno1.setDisciplinas(Arrays.asList(JavaWeb,Estrutura_de_Dados,arquitetura));
+		aluno2.setDisciplinas(Arrays.asList(JavaWeb,arquitetura));
+		aluno3.setDisciplinas(Arrays.asList(Estrutura_de_Dados));
+		
+//		List<Turma> listaTurmas = turmaService.buscarTodasTurmas();
+//		listaTurmas.forEach(turma -> System.out.println("Nome da turma: " + turma.getNome()));
 
-		disciplinaRepo.saveAll(Arrays.asList(JavaWeb, Estrutura_de_Dados));
+		turmaRepo.saveAll(Arrays.asList(ads, rede));
+		disciplinaRepo.saveAll(Arrays.asList(JavaWeb, Estrutura_de_Dados, arquitetura));
+		alunoRepo.saveAll(Arrays.asList(aluno1,aluno2,aluno3));
 
 	}
 }

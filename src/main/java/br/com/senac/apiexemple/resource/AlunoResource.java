@@ -1,7 +1,6 @@
 package br.com.senac.apiexemple.resource;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,16 +29,15 @@ public class AlunoResource {
 
 	@Autowired
 	private AlunoService alunoService;
-	
+
 	@Autowired
 	TurmaService turmaService;
 
 	@PostMapping
-	public ResponseEntity<Aluno> cadastrarAluno(@RequestBody Aluno Aluno) {
-		Aluno aluno = mapper.map(Aluno, Aluno.class);
-		aluno = alunoService.salvar(aluno);
-		Aluno alunoNovo = mapper.map(aluno, Aluno.class);
-		return ResponseEntity.ok().body(alunoNovo);
+	public ResponseEntity<Aluno> cadastrarAluno(@RequestBody Aluno aluno) {
+	    aluno = alunoService.salvar(aluno);
+	    Aluno alunoSalvo =  mapper.map(aluno, Aluno.class);  
+	    return ResponseEntity.ok().body(alunoSalvo);
 	}
 
 	// @RequestMapping(method = RequestMethod.GET) -- Forma antiga de fazer
@@ -53,8 +51,8 @@ public class AlunoResource {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Object> buscarAlunoPorID(@PathVariable("id") Integer id) {
-		Optional<Aluno> alunoOptional = alunoService.getAlunoById(id);
-		if (alunoOptional.isEmpty()) {
+		Aluno alunoOptional = alunoService.getAlunoById(id);
+		if (alunoOptional == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Aluno não encontrado!");
 		}
 		return ResponseEntity.status(HttpStatus.OK).body(alunoService.getAlunoById(id));
@@ -62,13 +60,12 @@ public class AlunoResource {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<Object> atualizarAluno(@PathVariable("id") Integer id, @RequestBody Aluno alunoAtualizado) {
-		Optional<Aluno> alunoOptional = alunoService.getAlunoById(id);
-		if (alunoOptional.isEmpty()) {
+		Aluno alunoOptional = alunoService.getAlunoById(id);
+		if (alunoOptional == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Aluno não encontrado!");
 		}
-		turmaService.salvar(alunoAtualizado.getTurma());
-		alunoAtualizado.setId(alunoOptional.get().getId());
-		return ResponseEntity.status(HttpStatus.CREATED).body(alunoService.salvar(alunoAtualizado)); 
+		alunoAtualizado.setId(alunoOptional.getId());
+		return ResponseEntity.status(HttpStatus.CREATED).body(alunoService.atualizarAluno( alunoAtualizado.getId(),alunoAtualizado));
 	}
 
 	@DeleteMapping("/{id}")
