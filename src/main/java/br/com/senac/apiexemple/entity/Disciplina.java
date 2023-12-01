@@ -20,6 +20,10 @@ public class Disciplina {
 		return nome;
 	}
 
+	public void setId(Integer id) {
+		Id = id;
+	}
+
 	public void setNome(String nome) {
 		this.nome = nome;
 	}

@@ -1,0 +1,1 @@
+insert into professor (email,nome,sobre_nome,id) values ('testeFlyway@gmail.com','Fly','Way',4);

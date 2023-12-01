@@ -9,14 +9,18 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
 import br.com.senac.apiexemple.entity.Aluno;
+import br.com.senac.apiexemple.entity.AlunoDisciplina;
+import br.com.senac.apiexemple.entity.Avaliacao;
 import br.com.senac.apiexemple.entity.Disciplina;
 import br.com.senac.apiexemple.entity.Professor;
 import br.com.senac.apiexemple.entity.Turma;
 import br.com.senac.apiexemple.repository.AlunoRepository;
+import br.com.senac.apiexemple.repository.AvaliacaoRepository;
 import br.com.senac.apiexemple.repository.DisciplinaRepository;
 import br.com.senac.apiexemple.repository.ProfessorRepository;
 import br.com.senac.apiexemple.repository.TurmaRepository;
 import br.com.senac.apiexemple.service.AlunoService;
+import br.com.senac.apiexemple.service.AvaliacaoService;
 import br.com.senac.apiexemple.service.ProfessorService;
 import br.com.senac.apiexemple.service.TurmaService;
 
@@ -38,10 +42,16 @@ public class init implements ApplicationListener<ContextRefreshedEvent> {
 	ProfessorRepository professorRepo;
 	@Autowired
 	DisciplinaRepository disciplinaRepo;
+	@Autowired
+	AvaliacaoRepository avaliacaoRepo;
+
+	@Autowired
+	AvaliacaoService avaliacaoService;
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
 		
+		// Turmas
 		Turma ads = new Turma();
 		ads.setNome("ADS");
 		Turma rede = new Turma();
@@ -93,15 +103,14 @@ public class init implements ApplicationListener<ContextRefreshedEvent> {
 		
 		// Disciplinas
 		Disciplina JavaWeb = new Disciplina();
-		JavaWeb.setNome("Java Web");
 		Disciplina Estrutura_de_Dados = new Disciplina();
-		Estrutura_de_Dados.setNome("Estrutura de Dados");
 		Disciplina mobile = new Disciplina();
 		mobile.setNome("Programação Mobile");
 		Disciplina arquitetura = new Disciplina();
-		arquitetura.setNome("Arquitetura de Computadores");
 		
-		// Turmas
+		JavaWeb.setNome("Java Web");
+		Estrutura_de_Dados.setNome("Estrutura de Dados");
+		arquitetura.setNome("Arquitetura de Computadores");
 		
 		aluno1.setTurma(ads);
 		aluno2.setTurma(rede);
@@ -110,13 +119,39 @@ public class init implements ApplicationListener<ContextRefreshedEvent> {
 		aluno1.setDisciplinas(Arrays.asList(JavaWeb,Estrutura_de_Dados,arquitetura));
 		aluno2.setDisciplinas(Arrays.asList(JavaWeb,arquitetura));
 		aluno3.setDisciplinas(Arrays.asList(Estrutura_de_Dados));
-		
 //		List<Turma> listaTurmas = turmaService.buscarTodasTurmas();
 //		listaTurmas.forEach(turma -> System.out.println("Nome da turma: " + turma.getNome()));
 
 		turmaRepo.saveAll(Arrays.asList(ads, rede));
 		disciplinaRepo.saveAll(Arrays.asList(JavaWeb, Estrutura_de_Dados, arquitetura));
 		alunoRepo.saveAll(Arrays.asList(aluno1,aluno2,aluno3));
+		
+		Avaliacao avaliacaoAluno1 = new Avaliacao();
+		Avaliacao avaliacaoAluno2 = new Avaliacao();
+		Avaliacao avaliacaoAluno3 = new Avaliacao();
+		
+		AlunoDisciplina alunoDisciplina = new AlunoDisciplina();
+		AlunoDisciplina alunoDisciplina2 = new AlunoDisciplina();
+		AlunoDisciplina alunoDisciplina3 = new AlunoDisciplina();
+		alunoDisciplina.setAluno(aluno1);
+		alunoDisciplina2.setAluno(aluno2);
+		alunoDisciplina3.setAluno(aluno3);
+		alunoDisciplina.setDisciplina(arquitetura);
+		alunoDisciplina2.setDisciplina(Estrutura_de_Dados);
+		alunoDisciplina3.setDisciplina(JavaWeb);
+		
+		avaliacaoAluno1.setAlunoDisciplina(alunoDisciplina2);
+		avaliacaoAluno2.setAlunoDisciplina(alunoDisciplina);
+		avaliacaoAluno3.setAlunoDisciplina(alunoDisciplina3);
+		avaliacaoAluno1.setConceito("A");
+		avaliacaoAluno2.setConceito("B");
+		avaliacaoAluno3.setConceito("A");
+		avaliacaoService.save(avaliacaoAluno1);
+		avaliacaoService.save(avaliacaoAluno2);
+		avaliacaoService.save(avaliacaoAluno3);
+		
+		Avaliacao aval = avaliacaoService.buscarNotaAlunoDisciplina(alunoDisciplina);
+		System.out.println("Avaliacao: " + aval.getConceito());
 
 	}
 }
